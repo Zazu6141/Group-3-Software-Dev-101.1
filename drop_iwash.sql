@@ -1,0 +1,4 @@
+DROP TABLE IF EXISTS closet;
+DROP TABLE IF EXISTS user_table;
+DROP TABLE IF EXISTS washing_instructions;
+DROP TABLE IF EXISTS item;
