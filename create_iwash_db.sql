@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS closet (
  closet_id INT NOT NULL PRIMARY KEY,
  item_id INT NOT NULL
+ user_id INT NOT NULL FOREIGN KEY
 );
 
 CREATE TABLE IF NOT EXISTS user_table (
