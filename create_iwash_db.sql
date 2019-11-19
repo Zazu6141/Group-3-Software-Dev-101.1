@@ -1,9 +1,3 @@
-CREATE TABLE IF NOT EXISTS closet (
- closet_id INT NOT NULL PRIMARY KEY,
- item_id INT NOT NULL
- user_id INT NOT NULL FOREIGN KEY
-);
-
 CREATE TABLE IF NOT EXISTS user_table (
 	user_id INT NOT NULL PRIMARY KEY,
 	last_name VARCHAR(40) NOT NULL,
@@ -12,6 +6,13 @@ CREATE TABLE IF NOT EXISTS user_table (
 	password VARCHAR(20) NOT NULL,
 	email VARCHAR(40) NOT NULL,
 	closet_id INT NOT NULL
+);
+
+
+CREATE TABLE IF NOT EXISTS closet (
+ closet_id INT NOT NULL PRIMARY KEY,
+ item_id INT NOT NULL,
+ user_id INT NOT NULL references user_table(user_id)
 );
 
 CREATE TABLE IF NOT EXISTS washing_instructions (
