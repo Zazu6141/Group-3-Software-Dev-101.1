@@ -13,10 +13,10 @@
             else {
                 $(this).removeClass('has-val');
             }
-        })    
+        })
     })
-  
-  
+
+
     /*==================================================================
     [ Validate ]*/
     var input = $('.validate-input .input100');
@@ -65,7 +65,7 @@
 
         $(thisAlert).removeClass('alert-validate');
     }
-    
+
     /*==================================================================
     [ Show pass ]*/
     var showPass = 0;
@@ -80,7 +80,7 @@
             $(this).removeClass('active');
             showPass = 0;
         }
-        
+
     });
 
 
