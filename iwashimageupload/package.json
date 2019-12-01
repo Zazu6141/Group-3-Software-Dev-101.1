@@ -1,0 +1,28 @@
+{
+  "name": "iwashuserupload",
+  "version": "1.0.0",
+  "description": "user image upload",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zazu6141/Group-3-Software-Dev-101.1.git"
+  },
+  "keywords": [
+    "iwash"
+  ],
+  "author": "iwash group cu JM",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Zazu6141/Group-3-Software-Dev-101.1/issues"
+  },
+  "homepage": "https://github.com/Zazu6141/Group-3-Software-Dev-101.1#readme",
+  "dependencies": {
+    "ejs": "^3.0.1",
+    "express": "^4.17.1",
+    "multer": "^1.4.2",
+    "nodemon": "^2.0.1"
+  }
+}
