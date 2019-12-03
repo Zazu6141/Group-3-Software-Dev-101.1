@@ -9,6 +9,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const pug = require('pug');
 
+var current_user_id;
+
 
 //login to server
 //var connection = mysql.createConnection('mysql://be627f988962c9:a66b1e98@us-cdbr-iron-east-05.cleardb.net/heroku_4d509a908d16f19?reconnect=true?multipleStatements=true');
@@ -25,6 +27,49 @@ db = connection.connect();
 app.set('view engine', 'pug');
 app.use(express.static(__dirname + '/'));
 
+app.get('/registration', function(req, res) {
+	res.render('registration');
+});
+
+app.post('/registration', function(req, res) {
+	var username = req.body.username;
+	var password = req.body.password;
+	var first_name = req.body.first_name;
+	var last_name = req.body.last_name;
+
+	var insert_user_info = "INSERT INTO user_table(user_id, first_name, last_name, user_name, password, email, closet_id) VALUES (DEFAULT, '" + first_name + "', '" + last_name + "', '" + username + "', '" + password + "', ' ', DEFAULT)";
+
+	connection.query(insert_user_info);
+	res.redirect('login');
+});
+
+app.get('/login', function(req, res) {
+	res.render('login');
+});
+
+app.post('/login', function(req, res) {
+	var username = req.body.username;
+	var password = req.body.password;
+
+	var verify_username = "SELECT EXISTS(SELECT * FROM user_table WHERE user_name = '" + username + "') AS exist;";
+	var verify_password = "SELECT EXISTS(SELECT * FROM user_table WHERE password = '" + password + "') AS exist;";
+	var verify = verify_username + verify_password;
+	connection.query(verify, (err, result) => {
+		if (result[0].exist && result[1].exist) {
+			var get_user_id = "SELECT user_id FROM user_table WHERE user_name = '" + username + "';";
+			connection.query(get_user_id, (err, result) => {
+				current_user_id = result[0].user_id;
+			})
+			res.redirect('closet.html');
+		}
+		else {
+			res.render('login', {
+				data: result
+			})
+		}
+	})
+});
+
 //load add clothes page
 app.get('/add_clothes', function(req, res) {
 	
@@ -39,9 +84,15 @@ app.post('/add_clothes', function(req, res) {
 	var color = req.body.color; //color text
 	var description = req.body.description; //description text
 	var materials = req.body.materials; //materials text
+	var image = req.body.image;
+	console.log(image);
+
+	if (description == undefined) {
+		description = 'NULL';
+	}
 	
 	//insert query
-	var insert_item = "INSERT INTO item(item_id, brand, color, type, image, description, materials) VALUES (DEFAULT, '" + brand + "', '" + color + "', '" + article + "', '" + season + "', '" + description + "', '" + materials + "');";
+	var insert_item = "INSERT INTO item(item_id, brand, color, type, season, description, materials, user_id) VALUES (DEFAULT, '" + brand + "', '" + color + "', '" + article + "', '" + season + "', '" + description + "', '" + materials + "', " + current_user_id + ");";
 
 	//execute query
 	connection.query(insert_item);
@@ -64,13 +115,23 @@ app.post('/add_washing_instructions', function(req, res) {
 	var bleach = req.body.bleach; // bleach selection
 	var iron = req.body.iron; //iron selection
 
+	if (wash_temp == undefined) {
+		wash_temp = 'NULL';
+	}
+	if (wash_cycle == undefined) {
+		wash_cycle == 'NULL';
+	}
+
 	var get_item_id = "SELECT * FROM item ORDER BY item_id DESC LIMIT 1;"; //query to get most recent item_id which is necessary for washing_instructions primary key
 	//execute query to get item_id
 	connection.query(get_item_id, (err, result) => {
 		//query to insert data into washing_instructions, includes results from get_item_id query
-		var insert_wash = "INSERT INTO washing_instructions(wash_id, item_id, wash_type, wash_temp, wash_cycle, drying_type, drying_temp, bleach, iron) VALUES (DEFAULT, '" + result[0].item_id + "', '" + wash_type + "', '" + wash_temp + "', '" + wash_cycle + "', '" + drying_type + "', '" + drying_temp + "', '" + bleach + "', '" + iron + "');";
+		var insert_wash = "INSERT INTO washing_instructions(wash_id, item_id, wash_type, wash_temp, wash_cycle, bleach) VALUES (DEFAULT, '" + result[0].item_id + "', '" + wash_type + "', '" + wash_temp + "', '" + wash_cycle + "', '"  + bleach  + "');";
+		var insert_dry = "INSERT INTO drying_instructions(dry_id, item_id, drying_type, drying_temp, iron) VALUES (DEFAULT, '" + result[0].item_id + "', '" + drying_type + "', '" + drying_temp + "', '" + iron + "');";
 		//execute query to insert
-		connection.query(insert_wash);
+		var query = insert_wash + insert_dry;
+		console.log(query);
+		connection.query(query);
 	});
 	
 	//redirect to view_closet on completion
@@ -129,7 +190,7 @@ app.post('/view_closet', function(req, res) {
 	}
 
 	//render page
-	res.render('view_closet');
+	res.redirect('view_closet');
 
 });
 
@@ -182,7 +243,7 @@ app.post('/available_loads', function(req, res) {
 		connection.query(wash_clothes);
 	}
 	//render page
-	res.render('available_loads');
+	res.redirect('available_loads');
 });
 
 //loads delete_clothes page
@@ -235,7 +296,7 @@ app.post('/delete_clothes', function(req, res) {
 		connection.query(delete_clothes);
 	}
 
-	res.render('delete_clothes');
+	res.redirect('delete_clothes');
 
 
 })

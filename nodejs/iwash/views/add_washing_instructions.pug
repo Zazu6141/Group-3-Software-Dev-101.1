@@ -76,15 +76,19 @@ nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
             b Wash Type
           .col-sm-10
             .form-check
-              input#undergrad.form-check-input(onclick='' type='radio' name='wash_type' value='machine')
+              input#machine_wash(type='radio' name='wash_type' value='machine' onclick='javascript:machine_wash_options();' checked)
               label.form-check-label(for='undergrad')
                 | Machine Wash
             .form-check
-              input#graduate.form-check-input(onclick='' type='radio' name='wash_type' value='hand wash')
+              input#graduate.form-check-input(onclick='javascript:machine_wash_options();' type='radio' name='wash_type' value='hand wash')
               label.form-check-label(for='graduate')
                 | Hand Wash
+            .form-check
+              input#undergrad.form-check-input(onclick='javascript:machine_wash_options();' type='radio' name='wash_type' value='dry clean')
+              label.form-check-label(for='undergrad')
+                | Dry Clean
         br
-        #wash_temp.row
+        #wash_temp.row(style='display:none')
           label.col-form-label.col-sm-2.pt-0
             b Wash Temperature
           .col-sm-10
@@ -104,8 +108,8 @@ nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
               input#graduate.form-check-input(onclick='' type='radio' name='wash_temp' value='hot')
               label.form-check-label(for='graduate')
                 | Hot
-        br
-        #wash_cycle.row
+            br
+        #wash_cycle.row(style='display:none')
           label.col-form-label.col-sm-2.pt-0
             b Wash Cycle
           .col-sm-10
@@ -121,13 +125,13 @@ nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
               input#undergrad.form-check-input(onclick='' type='radio' name='wash_cycle' value='delicate')
               label.form-check-label(for='undergrad')
                 | Delicate
-        br
+            br
         #drying_type.row
           label.col-form-label.col-sm-2.pt-0
             b Drying Type
           .col-sm-10
             .form-check
-              input#undergrad.form-check-input(onclick='' type='radio' name='drying_type' value='tumble dry')
+              input#undergrad.form-check-input(onclick='' type='radio' name='drying_type' value='tumble dry' checked)
               label.form-check-label(for='undergrad')
                 | Tumble Dry
             .form-check
@@ -152,7 +156,7 @@ nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
             b Drying Temperature
           .col-sm-10
             .form-check
-              input#undergrad.form-check-input(onclick='' type='radio' name='drying_temp' value='high')
+              input#undergrad.form-check-input(onclick='' type='radio' name='drying_temp' value='high' checked)
               label.form-check-label(for='undergrad')
                 | High
             .form-check
@@ -173,7 +177,7 @@ nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
             b Bleach
           .col-sm-10
             .form-check
-              input#undergrad.form-check-input(onclick='' type='radio' name='bleach' value='bleach')
+              input#undergrad.form-check-input(onclick='' type='radio' name='bleach' value='bleach' checked)
               label.form-check-label(for='undergrad')
                 | Bleach
             .form-check
@@ -190,7 +194,7 @@ nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
             b Iron
           .col-sm-10
             .form-check
-              input#undergrad.form-check-input(onclick='' type='radio' name='iron' value='high')
+              input#undergrad.form-check-input(onclick='' type='radio' name='iron' value='high' checked)
               label.form-check-label(for='undergrad')
                 | Iron High Heat
             .form-check
