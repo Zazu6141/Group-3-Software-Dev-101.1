@@ -69,26 +69,31 @@ app.post('/login', function(req, res) {
 	var password = req.body.password;
 
 	var verify_username = "SELECT EXISTS(SELECT * FROM user_table WHERE user_name = '" + username + "') AS exist;";
-	var verify_password = "SELECT EXISTS(SELECT * FROM user_table WHERE password = '" + password + "') AS exist;";
-	var verify = verify_username + verify_password;
-	connection.query(verify, (err, result) => {
-		if (result[0][0].exist) {
-			var get_User_ID = "SELECT User_ID FROM user_table WHERE user_name = '" + username + "';";
-			connection.query(get_User_ID, (err, result) => {
-				current_User_ID = result[0].User_ID;
-				var get_closet_id = "SELECT closet_id FROM closet WHERE User_ID = '"  + current_User_ID + "';";
-				connection.query(get_closet_id, (err, result) => {
-					current_closet_id = result[0].closet_id;
-				})
+	connection.query(verify_username, (err, result) => {
+		if (result[0].exist) {
+			var verify_password = "SELECT password FROM user_table WHERE user_name = '" + username + "';";
+			connection.query(verify_password, (err, result) => {
+				console.log(result[0].password);
+				if (result[0].password == password) {
+					var get_User_ID = "SELECT User_ID FROM user_table WHERE user_name = '" + username + "';";
+					connection.query(get_User_ID, (err, result) => {
+						current_User_ID = result[0].User_ID;
+						var get_closet_id = "SELECT closet_id FROM closet WHERE User_ID = '"  + current_User_ID + "';";
+						connection.query(get_closet_id, (err, result) => {
+							current_closet_id = result[0].closet_id;
+						})
+					})
+					res.redirect('closet.html');
+				}
+				else {
+					res.render('login', {
+						data: result
+					})
+				}
 			})
-			res.redirect('closet.html');
-		}
-		else {
-			res.render('login', {
-				data: result
-			})
-		}
-	})
+			
+	}
+})
 });
 
 //load add clothes page
@@ -114,6 +119,7 @@ app.post('/add_clothes', function(req, res) {
 	
 	//insert query
 	var insert_item = "INSERT INTO item(item_id, brand, color, type, Season, description, materials, closet_id, image) VALUES (DEFAULT, '" + brand + "', '" + color + "', '" + article + "', '" + season + "', '" + description + "', '" + materials +  "', '" + current_closet_id + "', '" + image + "');";
+	console.log(insert_item);
 	//execute query
 	connection.query(insert_item);
 	res.redirect('add_washing_instructions');
@@ -166,7 +172,7 @@ app.get('closet', function(req, res) {
 //load view closet page
 app.get('/view_closet', function(req, res) {
 	//query to get all clothes form item table
-	var get_clothes = "SELECT * FROM item;";
+	var get_clothes = "SELECT * FROM item WHERE closet_id = " + current_closet_id + ";";
 
 	//execute query
 	connection.query(get_clothes, (err, result) => {
@@ -222,7 +228,11 @@ app.post('/view_closet', function(req, res) {
 //load available_loads page
 app.get('/available_loads', function(req, res) {
 	//query to get all worn clothes
-	var get_clothes = "SELECT * FROM item WHERE worn = true;";
+	var get_machine_clothes = "SELECT a.*, b.* FROM item a, washing_instructions b WHERE a.item_id = b.item_id AND b.wash_type = 'machine' AND a.Worn = true;";
+	var get_hand_dry = "SELECT a.*, b.* FROM item a, washing_instructions b WHERE a.item_id = b.item_id AND b.wash_type = 'hand wash' AND a.Worn = true;";
+	var get_dry_clean = "SELECT a.*, b.* FROM item a, washing_instructions b WHERE a.item_id = b.item_id AND b.wash_type = 'dry clean' AND a.Worn = true;";
+
+	var get_clothes = get_machine_clothes + get_hand_dry + get_dry_clean;
 
 	//execute query
 	connection.query(get_clothes, (err, result) => {
@@ -230,10 +240,22 @@ app.get('/available_loads', function(req, res) {
 		if (err) {
 			res.redirect('/closet.html');
 		}
+		var i;
+		for (i=0; i < result.length; i++) {
+			if (result[i] == []) {
+				result[i] = 0;
+			}
+		}
+		console.log(result[1]);
 
+		if (result[1] == '[]') {
+			console.log('test failed');
+		}
 		res.render('available_loads', {
 			//query results stored in result array
-			data: result
+			machine: result[0],
+			hand: result[1],
+			dry_clean: result[2]
 		})
 	})
 });

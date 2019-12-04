@@ -49,22 +49,54 @@ nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
     .wrap-login100
       // Bootstrap core CSS
       link(rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css' integrity='sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS' crossorigin='anonymous')
-      span.login100-form-title.p-b-34.p-t-27 Available Loads
+      span.login100-form-title.p-b-34.p-t-27 Machine Washables
       form(action="/available_loads", method="post")
         table.table.text-center
           tr
             th#Pants Type
-            th#Socks Brand
-            th#Underwear Color
+            th#Socks Name
+            th#Underwear Temperature
+            th Cycle
             th Wash
-          - if(data)
-            for item in data
+          - if(machine)
+            for item in machine
               tr
                 td(header='Shirts') #{item.type}
-                td(header='Pants') #{item.brand}
-                td(header='Socks') #{item.color}
+                td(header='Pants') #{item.description}
+                td(header='Socks') #{item.wash_temp}
+                td #{item.wash_cycle}
                 td
                   input(type='checkbox' name = 'wash' value = item.item_id)
+        - if(hand)
+            span.login100-form-title.p-b-34.p-t-27 Hand Wash
+            table.table.text-center
+              tr
+                th#Pants Type
+                th#Socks Name
+                th#Underwear Temperature
+                th Cycle
+                th Wash
+                for item in hand
+                  tr
+                    td(header='Shirts') #{item.type}
+                    td(header='Pants') #{item.description}
+                    td
+                      input(type='checkbox' name = 'wash' value = item.item_id)
+        - if(dry_clean)
+          span.login100-form-title.p-b-34.p-t-27 Dry Clean
+          table.table.text-center
+            tr
+              th#Pants Type
+              th#Socks Name
+              th#Underwear Temperature
+              th Cycle
+              th Wash
+              for item in dry_clean
+                tr
+                  td(header='Shirts') #{item.type}
+                  td(header='Pants') #{item.description}
+                  td
+                    input(type='checkbox' name = 'wash' value = item.item_id)
         input.btn.btn-primary.btn-block(type='submit' value='Wash')
       script(src='https://code.jquery.com/jquery-3.3.1.slim.min.js' integrity='sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo' crossorigin='anonymous')
       script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js' integrity='sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut' crossorigin='anonymous')
