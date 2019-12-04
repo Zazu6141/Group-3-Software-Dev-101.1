@@ -126,27 +126,6 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
 
-  <script>
-  function myFunction() {
-    var input, filter, table, tr, td, i;
-    input = document.getElementById("mylist");
-    filter = input.value.toUpperCase();
-    table = document.getElementById("myTable");
-    tr = table.getElementsByTagName("tr");
-    for (i = 0; i < tr.length; i++) {
-      td = tr[i].getElementsByTagName("td");
-      if (td) {
-        if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
-          tr[i].style.display = "";
-        } else {
-          tr[i].style.display = "none";
-        }
-      }
-    }
-  }
-  </script>
-
-
   <select id="mylist" onchange="myFunction()" class='form-control'>
   <option value="" selected>Select article of clothing...</option>
   <option>Shirts</option>
@@ -156,37 +135,100 @@
   <option>Shoes</option>
   </select>
 
-  <table class="table text-center" id="myTable">
-    <tr>
-      <th id="Shirts">Shirts</th>
-      <th id="Pants">Pants</th>
-      <th id="Socks">Socks</th>
-      <th id="Underwear">Underwear</th>
-      <th id="Shoes">Shoes</th>
+
+  <select id="mylist1" onchange="myFunction1()" class='form-control'>
+  <option value="" selected>Select a season...</option>
+  <option>Summer</option>
+  <option>Winter</option>
+  <option>Fall</option>
+  <option>Spring</option>
+  </select>
+
+  <table id="myTable">
+    <tr class="header">
+      <th style="width:33%;">Name</th>
+      <th style="width:33%;">Season</th>
+      <th style="width:33%;">Article of Clothing</th>
+
     </tr>
     <tr>
-      <td header="Shirts">0</td>    <!-- THIS IS CODE TO CREATE ANCHOR TAG TO MODAL <td><a href="outfits.html">Saved Outfits</td> -->
-      <td header="Pants">1</td>
-      <td header="Socks">2</td>
-      <td header="Underwear">3</td>
-      <td header="Shoes">4</td>
+      <td>Alfreds Futterkiste</td>
+      <td>Winter</td>
+      <td>Shirts</td>
     </tr>
     <tr>
-      <td header="Shirts">0</td>
-      <td header="Pants">1</td>
-      <td header="Socks">2</td>
-      <td header="Underwear">3</td>
-      <td header="Shoes">4</td>
+      <td>Berglunds snabbkop</td>
+      <td>Winter</td>
+      <td>Socks</td>
     </tr>
     <tr>
-      <td header="Shirts">0</td>
-      <td header="Pants">1</td>
-      <td header="Socks">2</td>
-      <td header="Underwear">3</td>
-      <td header="Shoes">4</td>
+      <td>Island Trading</td>
+      <td>Summer</td>
+      <td>Shoes</td>
+    </tr>
+    <tr>
+      <td>Koniglich Essen</td>
+      <td>Spring</td>
+      <td>Pants</td>
+    </tr>
+    <tr>
+      <td>Laughing Bacchus Winecellars</td>
+      <td>Spring</td>
+      <td>Shirts</td>
+    </tr>
+    <tr>
+      <td>Magazzini Alimentari Riuniti</td>
+      <td>Spring</td>
+      <td>Pants</td>
+    </tr>
+    <tr>
+      <td>North/South</td>
+      <td>Winter</td>
+      <td>Shirts</td>
     </tr>
   </table>
 
+  <script>
+  function myFunction() {
+    var input, filter, table, tr, td, i;
+    input = document.getElementById("mylist");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td")[2];
+      if (td) {
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          tr[i].style.display = "";
+        } else {
+          tr[i].style.display = "none";
+        }
+      }
+    }
+  }
+
+  function myFunction1() {
+    var input2, filter2, table, tr, td, i;
+    input2 = document.getElementById("mylist1");
+    filter2 = input2.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+
+    for (i = 0; i < tr.length; i++) {
+      td2 = tr[i].getElementsByTagName("td")[1];
+      if (td2) {
+        txtValue = td2.textContent || td2.innerText;
+        if (txtValue.toUpperCase().indexOf(filter2) > -1) {
+          tr[i].style.display = "";
+        } else {
+          tr[i].style.display = "none";
+        }
+      }
+    }
+  }
+  </script>
 
 
 
