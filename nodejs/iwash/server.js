@@ -40,17 +40,22 @@ app.post('/registration', function(req, res) {
 	var email = req.body.email;
 
 	var insert_user_info = "INSERT INTO user_table(User_ID, first_name, last_name, user_name, password, email) VALUES (DEFAULT, '" + first_name + "', '" + last_name + "', '" + username + "', '" + password + "', '" + email + "');";
-	var insert_closet_info = "INSERT INTO closet(User_ID, closet_id) VALUES (DEFAULT, DEFAULT);";
-	var query = insert_user_info + insert_closet_info;
-	connection.query(query, (err, result) => {
+	console.log(insert_user_info);
+	connection.query(insert_user_info, (err, result) => {
 		if (err) {
-			console.log('error');
+			console.log(err);
 			res.render('registration', {
 				data: result
 			})
 		}
 		else {
-			res.render('login');
+			var get_user_id = "SELECT User_ID FROM user_table WHERE user_name = '" + username + "';";
+			connection.query(get_user_id, (err, result) => {
+				console.log(result[0].User_ID);
+				var insert_into_closet = "INSERT INTO closet(User_ID, closet_id) VALUES (" + result[0].User_ID + ", DEFAULT);";
+				connection.query(insert_into_closet);
+				res.redirect('login');
+			})
 		}
 	});
 });
@@ -67,7 +72,7 @@ app.post('/login', function(req, res) {
 	var verify_password = "SELECT EXISTS(SELECT * FROM user_table WHERE password = '" + password + "') AS exist;";
 	var verify = verify_username + verify_password;
 	connection.query(verify, (err, result) => {
-		if (result[0][0].exist && result[1][0].exist) {
+		if (result[0][0].exist) {
 			var get_User_ID = "SELECT User_ID FROM user_table WHERE user_name = '" + username + "';";
 			connection.query(get_User_ID, (err, result) => {
 				current_User_ID = result[0].User_ID;
@@ -109,7 +114,6 @@ app.post('/add_clothes', function(req, res) {
 	
 	//insert query
 	var insert_item = "INSERT INTO item(item_id, brand, color, type, Season, description, materials, closet_id, image) VALUES (DEFAULT, '" + brand + "', '" + color + "', '" + article + "', '" + season + "', '" + description + "', '" + materials +  "', '" + current_closet_id + "', '" + image + "');";
-	console.log(insert_item);
 	//execute query
 	connection.query(insert_item);
 	res.redirect('add_washing_instructions');
