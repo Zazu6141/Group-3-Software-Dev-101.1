@@ -9,7 +9,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const pug = require('pug');
 
-var current_user_id;
+var current_User_ID;
+var current_closet_id;
 
 
 //login to server
@@ -36,11 +37,22 @@ app.post('/registration', function(req, res) {
 	var password = req.body.password;
 	var first_name = req.body.first_name;
 	var last_name = req.body.last_name;
+	var email = req.body.email;
 
-	var insert_user_info = "INSERT INTO user_table(user_id, first_name, last_name, user_name, password, email, closet_id) VALUES (DEFAULT, '" + first_name + "', '" + last_name + "', '" + username + "', '" + password + "', ' ', DEFAULT)";
-
-	connection.query(insert_user_info);
-	res.redirect('login');
+	var insert_user_info = "INSERT INTO user_table(User_ID, first_name, last_name, user_name, password, email) VALUES (DEFAULT, '" + first_name + "', '" + last_name + "', '" + username + "', '" + password + "', '" + email + "');";
+	var insert_closet_info = "INSERT INTO closet(User_ID, closet_id) VALUES (DEFAULT, DEFAULT);";
+	var query = insert_user_info + insert_closet_info;
+	connection.query(query, (err, result) => {
+		if (err) {
+			console.log('error');
+			res.render('registration', {
+				data: result
+			})
+		}
+		else {
+			res.render('login');
+		}
+	});
 });
 
 app.get('/login', function(req, res) {
@@ -55,10 +67,14 @@ app.post('/login', function(req, res) {
 	var verify_password = "SELECT EXISTS(SELECT * FROM user_table WHERE password = '" + password + "') AS exist;";
 	var verify = verify_username + verify_password;
 	connection.query(verify, (err, result) => {
-		if (result[0].exist && result[1].exist) {
-			var get_user_id = "SELECT user_id FROM user_table WHERE user_name = '" + username + "';";
-			connection.query(get_user_id, (err, result) => {
-				current_user_id = result[0].user_id;
+		if (result[0][0].exist && result[1][0].exist) {
+			var get_User_ID = "SELECT User_ID FROM user_table WHERE user_name = '" + username + "';";
+			connection.query(get_User_ID, (err, result) => {
+				current_User_ID = result[0].User_ID;
+				var get_closet_id = "SELECT closet_id FROM closet WHERE User_ID = '"  + current_User_ID + "';";
+				connection.query(get_closet_id, (err, result) => {
+					current_closet_id = result[0].closet_id;
+				})
 			})
 			res.redirect('closet.html');
 		}
@@ -92,8 +108,8 @@ app.post('/add_clothes', function(req, res) {
 	}
 	
 	//insert query
-	var insert_item = "INSERT INTO item(item_id, brand, color, type, season, description, materials, user_id) VALUES (DEFAULT, '" + brand + "', '" + color + "', '" + article + "', '" + season + "', '" + description + "', '" + materials + "', " + current_user_id + ");";
-
+	var insert_item = "INSERT INTO item(item_id, brand, color, type, Season, description, materials, closet_id, image) VALUES (DEFAULT, '" + brand + "', '" + color + "', '" + article + "', '" + season + "', '" + description + "', '" + materials +  "', '" + current_closet_id + "', '" + image + "');";
+	console.log(insert_item);
 	//execute query
 	connection.query(insert_item);
 	res.redirect('add_washing_instructions');
@@ -129,6 +145,7 @@ app.post('/add_washing_instructions', function(req, res) {
 		var insert_wash = "INSERT INTO washing_instructions(wash_id, item_id, wash_type, wash_temp, wash_cycle, bleach) VALUES (DEFAULT, '" + result[0].item_id + "', '" + wash_type + "', '" + wash_temp + "', '" + wash_cycle + "', '"  + bleach  + "');";
 		var insert_dry = "INSERT INTO drying_instructions(dry_id, item_id, drying_type, drying_temp, iron) VALUES (DEFAULT, '" + result[0].item_id + "', '" + drying_type + "', '" + drying_temp + "', '" + iron + "');";
 		//execute query to insert
+		console.log(result[0]);
 		var query = insert_wash + insert_dry;
 		console.log(query);
 		connection.query(query);
@@ -136,6 +153,10 @@ app.post('/add_washing_instructions', function(req, res) {
 	
 	//redirect to view_closet on completion
 	res.redirect('/view_closet');
+})
+
+app.get('closet', function(req, res) {
+	res.render('closet.html');
 })
 
 //load view closet page
@@ -147,7 +168,7 @@ app.get('/view_closet', function(req, res) {
 	connection.query(get_clothes, (err, result) => {
 		//redirect to home page on error
 		if (err) {
-			res.redirect('/closet.html');
+			res.redirect('closet');
 		}
 		res.render('view_closet', {
 			//pass query results through reslt array
