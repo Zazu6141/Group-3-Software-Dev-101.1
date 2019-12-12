@@ -1,1 +1,2 @@
-# iWash
+This is the project repo for out Software Development Methods and Tools class. 
+Our application is called iWash and is a digitial closet reference that allows you to input all of your cloths and along with them a description and washing/drying instructions. Once you have all of your cloths in your closet you can mark an item as worn and then the app will create a "Load" for your worn items grouping them by the washing instructions. This is all so that you can better follow the instructions on your clothing-tags ensuring lasting longevity. There's also a 'How-To' page with video instructions for certian cleaning methods, and a weather api because you want to wear the right stuff!
